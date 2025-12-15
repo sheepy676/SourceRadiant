@@ -849,6 +849,7 @@ void DoNewPatchDlg( EPatchPrefab prefab, int minrows, int mincols, int defrows, 
 			{
 #define D_ITEM( x ) if ( x >= mincols && ( !maxcols || x <= maxcols ) ) width->addItem( # x )
 				D_ITEM( 3 );
+				D_ITEM( 4 );
 				D_ITEM( 5 );
 				D_ITEM( 7 );
 				D_ITEM( 9 );
@@ -869,6 +870,7 @@ void DoNewPatchDlg( EPatchPrefab prefab, int minrows, int mincols, int defrows, 
 			{
 #define D_ITEM( x ) if ( x >= minrows && ( !maxrows || x <= maxrows ) ) height->addItem( # x )
 				D_ITEM( 3 );
+				D_ITEM( 4 );
 				D_ITEM( 5 );
 				D_ITEM( 7 );
 				D_ITEM( 9 );

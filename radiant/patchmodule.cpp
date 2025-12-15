@@ -188,6 +188,7 @@ public:
 		Patch_Construct( ePatchTypeDoom3 );
 
 		m_patchdoom3 = &GetDoom3PatchCreator();
+		g_patchCreator = m_patchdoom3;
 	}
 	~PatchDoom3API(){
 		Patch_Destroy();
