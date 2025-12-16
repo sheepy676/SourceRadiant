@@ -81,6 +81,8 @@ namespace
 typedef std::map<CopiedString, CopiedString> KeyValues;
 KeyValues g_selectedKeyValues;
 KeyValues g_selectedDefaultKeyValues;
+typedef std::list<EntityOutput> Outputs;
+Outputs g_selectedOutputs;
 }
 
 const char* SelectedEntity_getValueForKey( const char* key ){
@@ -731,6 +733,7 @@ QLineEdit* g_entityValueEntry;
 QToolButton* g_focusToggleButton;
 
 QTreeWidget* g_entprops_store;
+QTreeWidget* g_entoutputs_store;
 const EntityClass* g_current_flags = 0;
 const EntityClass* g_current_comment = 0;
 const EntityClass* g_current_attributes = 0;
@@ -800,6 +803,43 @@ void Entity_GetKeyValues_Selected( KeyValues& keyvalues, KeyValues& defaultValue
 			}
 		}
 	} visitor( keyvalues, defaultValues );
+	GlobalSelectionSystem().foreachSelected( visitor );
+}
+
+void Entity_GetOutputs( const Entity& entity, Outputs& outputs ){
+	class GetOutputsVisitor : public Entity::Visitor
+	{
+		Outputs& m_outputs;
+	public:
+		GetOutputsVisitor( Outputs& outputs ) : m_outputs( outputs ) {
+		}
+		void visit( const char* key, const char* value ) override {
+			if ( string_equal_prefix( key, "On" ) ) {
+				m_outputs.push_back( Outputs::value_type( key, value ) );
+			}
+		}
+	} visitor( outputs );
+	entity.forEachKeyValue( visitor );
+}
+
+void Entity_GetOutputs_Selected( Outputs& outputs ){
+	class EntityGetKeyValues : public SelectionSystem::Visitor
+	{
+		Outputs& m_outputs;
+		mutable std::set<Entity*> m_visited;
+	public:
+		EntityGetKeyValues( Outputs& outputs ) : m_outputs( outputs ) {
+		}
+		void visit( scene::Instance& instance ) const override {
+			Entity* entity = Node_getEntity( instance.path().top() );
+			if ( entity == 0 && instance.path().size() != 1 ) {
+				entity = Node_getEntity( instance.path().parent() );
+			}
+			if ( entity != 0 && m_visited.insert( entity ).second ) {
+				Entity_GetOutputs( *entity, m_outputs );
+			}
+		}
+	} visitor( outputs );
 	GlobalSelectionSystem().foreachSelected( visitor );
 }
 
@@ -1036,6 +1076,9 @@ void EntityInspector_updateKeyValues(){
 	g_selectedDefaultKeyValues.clear();
 	Entity_GetKeyValues_Selected( g_selectedKeyValues, g_selectedDefaultKeyValues );
 
+	g_selectedOutputs.clear();
+	Entity_GetOutputs_Selected( g_selectedOutputs );
+
 	EntityInspector_setEntityClass( GlobalEntityClassManager().findOrInsert( keyvalues_valueforkey( g_selectedKeyValues, "classname" ), false ) );
 
 	EntityInspector_updateSpawnflags();
@@ -1045,6 +1088,15 @@ void EntityInspector_updateKeyValues(){
 	for ( const auto&[ key, value ] : g_selectedKeyValues )
 	{
 		g_entprops_store->addTopLevelItem( new QTreeWidgetItem( { key.c_str(), value.c_str() } ) );
+	}
+
+	// walk through outputs and add
+	g_entoutputs_store->clear();
+	for ( const auto& output : g_selectedOutputs )
+	{
+		QStringList list = QString(output.value().c_str()).split(',');
+		list = QStringList{ output.key().c_str() } + list;
+		g_entoutputs_store->addTopLevelItem( new QTreeWidgetItem( list ) );
 	}
 
 	for ( EntityAttribute *attr : g_entityAttributes )
@@ -1370,6 +1422,19 @@ QWidget* EntityInspector_constructWindow( QWidget* toplevel ){
 		g_attributeBox->setColumnStretch( 0, 111 );
 		g_attributeBox->setColumnStretch( 1, 333 );
 		scroll->setWidget( containerWidget ); // widget's layout must be set b4 this!
+	}
+	{
+		// outputs list
+		auto *tree = g_entoutputs_store = new QTreeWidget;
+		tree->setColumnCount( 6 );
+		tree->setUniformRowHeights( true ); // optimization
+		tree->setHorizontalScrollBarPolicy( Qt::ScrollBarPolicy::ScrollBarAlwaysOff );
+		tree->header()->setSectionResizeMode( 0, QHeaderView::ResizeMode::ResizeToContents ); // no text elision
+		tree->setHeaderHidden( true );
+		tree->setRootIsDecorated( false );
+		tree->setEditTriggers( QAbstractItemView::EditTrigger::NoEditTriggers );
+
+		splitter->addWidget( tree );
 	}
 
 	g_entityInspector_windowConstructed = true;
