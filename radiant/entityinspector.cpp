@@ -1072,6 +1072,12 @@ void EntityInspector_applySpawnflags(){
 	}
 }
 
+class OutputTreeWidgetItem : public QTreeWidgetItem {
+	EntityOutput& m_output;
+public:
+	OutputTreeWidgetItem( const QStringList& strings, EntityOutput& output ) : QTreeWidgetItem( strings ), m_output( output ) {
+	}
+};
 
 void EntityInspector_updateKeyValues(){
 	g_selectedKeyValues.clear();
@@ -1094,11 +1100,11 @@ void EntityInspector_updateKeyValues(){
 
 	// walk through outputs and add
 	g_entoutputs_store->clear();
-	for ( const auto& output : g_selectedOutputs )
+	for ( auto& output : g_selectedOutputs )
 	{
 		QStringList list = QString(output.value().c_str()).split(',');
 		list = QStringList{ output.key().c_str() } + list;
-		QTreeWidgetItem* item = new QTreeWidgetItem( list );
+		OutputTreeWidgetItem* item = new OutputTreeWidgetItem( list, output );
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		g_entoutputs_store->addTopLevelItem( item );
 	}
@@ -1243,6 +1249,9 @@ protected:
 }
 g_pressedKeysFilter;
 
+void EntityOutputs_ItemChanged(QTreeWidgetItem *_item, int column){
+	OutputTreeWidgetItem *item = static_cast<OutputTreeWidgetItem*>(_item);
+}
 
 void EntityInspector_destroyWindow(){
 	g_entityInspector_windowConstructed = false;
@@ -1448,6 +1457,8 @@ QWidget* EntityInspector_constructWindow( QWidget* toplevel ){
 		header->setToolTip(5, "Number of uses<br>-1 = unlimited<br>1 = once");
 		tree->setRootIsDecorated( false );
 		tree->setEditTriggers( QAbstractItemView::EditTrigger::DoubleClicked );
+
+		QObject::connect( tree, &QTreeWidget::itemChanged, EntityOutputs_ItemChanged );
 
 		splitter->addWidget( tree );
 	}
