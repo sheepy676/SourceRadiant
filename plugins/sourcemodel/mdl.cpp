@@ -72,25 +72,24 @@ static void processMesh(mdlpp::StudioModel& mdl, mdlpp::BakedModel& baked, mdlpp
 	for ( size_t i = 0; i < mesh.indices.size(); i += 3 ) {
 		bool faceOk = true;
 		for ( size_t j = 2; j != (size_t)-1; j-- ) {
-			if ( !indicesMap.contains( mesh.indices[i + j] ) ) {
-				// globalOutputStream() << mesh.indices[i + j] << '\n';
-				if ( mesh.indices[i + j] >= baked.vertices.size() ) {
-					faceOk = false;
-					break;
-				}
-				indicesMap[mesh.indices[i + j]] = surface.vertices().size();
-				auto& vertex = baked.vertices[mesh.indices[i + j]];
-				surface.vertices().push_back(
-					ArbitraryMeshVertex(
-						Vertex3f( vertex.position[0], vertex.position[1], vertex.position[2] ),
-						Normal3f( vertex.normal[0], vertex.normal[1], vertex.normal[2] ),
-						TexCoord2f( vertex.uv[0], vertex.uv[1] )
-					)
-				);
+			if ( mesh.indices[i + j] >= baked.vertices.size() ) {
+				faceOk = false;
+				break;
 			}
 		}
 		if ( faceOk ) {
 			for ( size_t j = 2; j != (size_t)-1; j-- ) {
+				if ( !indicesMap.contains( mesh.indices[i + j] ) ) {
+					indicesMap[mesh.indices[i + j]] = surface.vertices().size();
+					auto& vertex = baked.vertices[mesh.indices[i + j]];
+					surface.vertices().push_back(
+						ArbitraryMeshVertex(
+							Vertex3f( vertex.position[0], vertex.position[1], vertex.position[2] ),
+							Normal3f( vertex.normal[0], vertex.normal[1], vertex.normal[2] ),
+							TexCoord2f( vertex.uv[0], vertex.uv[1] )
+						)
+					);
+				}
 				surface.indices().insert( indicesMap[mesh.indices[i + j]] );
 			}
 		}
