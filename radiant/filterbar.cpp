@@ -14,7 +14,7 @@
 #include <QMouseEvent>
 
 #include "entity.h"
-
+#include "shaderlib.h"
 
 CopiedString GetCommonShader( const char* name ){
 	const char* gotShader = g_pGameDescription->getKeyValue( StringStream<32>( "shader_", name ) );
@@ -26,10 +26,10 @@ CopiedString GetCommonShader( const char* name ){
 			const char* commonDir = g_pGameDescription->getKeyValue( "common_shaders_dir" );
 			if( string_empty( commonDir ) )
 				commonDir = "common/";
-			return StringStream<64>( "materials/", commonDir, name ).c_str();
+			return StringStream<64>( GlobalTexturePrefix_get(), commonDir, name ).c_str();
 		}
 		else{
-			return StringStream<64>( "materials/", name ).c_str();
+			return StringStream<64>( GlobalTexturePrefix_get(), name ).c_str();
 		}
 	}
 }

@@ -118,7 +118,7 @@ void TextureGroups_addWad( TextureGroups& groups, const char* archive ){
 typedef ReferenceCaller<TextureGroups, void(const char*), TextureGroups_addWad> TextureGroupsAddWadCaller;
 
 void TextureGroups_addShader( TextureGroups& groups, const char* shaderName ){
-	const char* texture = path_make_relative( shaderName, "materials/" );
+	const char* texture = path_make_relative( shaderName, GlobalTexturePrefix_get() );
 	if ( texture != shaderName ) {
 		const char* last = path_remove_directory( texture );
 		if ( !string_empty( last ) ) {
@@ -361,7 +361,7 @@ const char* TextureBrowser_GetSelectedShader(){
 void TextureBrowser_SetStatus( const char* name ){
 	IShader* shader = QERApp_Shader_ForName( name );
 	qtexture_t* q = shader->getTexture();
-	const auto strTex = StringStream( ( string_equal_prefix_nocase( name, "materials/" )? name + 10 : name ),
+	const auto strTex = StringStream( ( string_equal_prefix_nocase( name, GlobalTexturePrefix_get() )? name + 10 : name ),
 	                                  " W: ", q->width,
 	                                  " H: ", q->height );
 	shader->DecRef();
@@ -467,7 +467,7 @@ bool Texture_IsShown( IShader* shader, const TextureBrowser& textureBrowser ){
 		return false;
 	}
 
-	if ( !shader_equal_prefix( shader->getName(), "materials/" ) ) {
+	if ( !shader_equal_prefix( shader->getName(), GlobalTexturePrefix_get() ) ) {
 		return false;
 	}
 
@@ -659,8 +659,8 @@ public:
 		m_count = 0;
 	}
 	void operator()( const char* name ) const {
-		if ( shader_equal_prefix( name, "materials/" )
-		  && shader_equal_prefix( name + string_length( "materials/" ), m_directory ) ) {
+		if ( shader_equal_prefix( name, GlobalTexturePrefix_get() )
+		  && shader_equal_prefix( name + string_length( GlobalTexturePrefix_get() ), m_directory ) ) {
 			++m_count;
 			// request the shader, this will load the texture if needed
 			// this Shader_ForName call is a kind of hack
@@ -709,7 +709,7 @@ void TextureBrowser_ShowDirectory( const char* directory ){
 		if( archive ){
 			globalOutputStream() << "Loading " << Quoted( directory ) << " wad file.\n";
 			LoadShaderVisitor visitor;
-			archive->forEachFile( Archive::VisitorFunc( visitor, Archive::eFiles, 0 ), "materials/" );
+			archive->forEachFile( Archive::VisitorFunc( visitor, Archive::eFiles, 0 ), GlobalTexturePrefix_get() );
 		}
 		else{
 			globalErrorStream() << "Attempted to load " << Quoted( directory ) << " wad file.\n";
@@ -725,7 +725,7 @@ void TextureBrowser_ShowDirectory( const char* directory ){
 
 		if ( g_pGameDescription->mGameType != "doom3" ) {
 			// load remaining texture files
-			Radiant_getImageModules().foreachModule( LoadTexturesByTypeVisitor( StringStream<64>( "materials/", directory ) ) );
+			Radiant_getImageModules().foreachModule( LoadTexturesByTypeVisitor( StringStream<64>( GlobalTexturePrefix_get(), directory ) ) );
 		}
 	}
 
@@ -1164,7 +1164,7 @@ void TextureGroups_constructTreeView( TextureGroups& groups ){
 	{
 		// scan texture dirs and pak files only if not restricting to shaderlist
 		if ( g_pGameDescription->mGameType != "doom3" && !g_TextureBrowser_shaderlistOnly ) {
-			GlobalFileSystem().forEachDirectory( "materials/", TextureGroupsAddDirectoryCaller( groups ) );
+			GlobalFileSystem().forEachDirectory( GlobalTexturePrefix_get(), TextureGroupsAddDirectoryCaller( groups ) );
 		}
 
 		GlobalShaderSystem().foreachShaderName( TextureGroupsAddShaderCaller( groups ) );

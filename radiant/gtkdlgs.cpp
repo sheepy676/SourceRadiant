@@ -77,6 +77,8 @@
 #include "qerplugin.h"
 #include "os/file.h"
 
+#include "shaderlib.h"
+
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -2139,7 +2141,7 @@ private:
 			}
 		};
 
-		Radiant_getImageModules().foreachModule( LoadTexturesByTypeVisitor( "materials/", m_texTree ) );
+		Radiant_getImageModules().foreachModule( LoadTexturesByTypeVisitor( GlobalTexturePrefix_get(), m_texTree ) );
 		Radiant_getImageModules().foreachModule( LoadTexturesByTypeVisitor( "models/", m_texTree ) );
 		Radiant_getImageModules().foreachModule( LoadTexturesByTypeVisitor( "env/", m_texTree ) );
 	}
@@ -2218,7 +2220,7 @@ private:
 								complete_tex_path( "" );
 							}
 							else if( tokens[i] == "%p" ){
-								push_token( "materials/" ); // isn't textures/ every time, but mostly
+								push_token( GlobalTexturePrefix_get() ); // isn't textures/ every time, but mostly
 							}
 							else{
 								push_token( tokens[i] );

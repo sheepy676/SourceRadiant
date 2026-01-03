@@ -69,6 +69,7 @@
 #include "windowobservers.h"
 
 #include "render.h"
+#include "shaderlib.h"
 
 bool g_bCamEntityMenu = false;
 
@@ -1146,7 +1147,7 @@ void BackgroundImage::render( const VIEWTYPE viewtype ){
 #include "qe3.h"
 #include "os/file.h"
 const char* BackgroundImage::background_image_dialog(){
-	auto buffer = StringStream( g_qeglobals.m_userGamePath, "materials/" );
+	auto buffer = StringStream( g_qeglobals.m_userGamePath, GlobalTexturePrefix_get() );
 
 	if ( !file_readable( buffer ) ) {
 		// just go to fsmain
