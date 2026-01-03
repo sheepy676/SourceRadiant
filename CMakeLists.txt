@@ -693,6 +693,20 @@ add_module(imagepng
 )
 target_link_libraries(imagepng PRIVATE PNG::PNG)
 
+add_module(image
+	SOURCES
+		${PROJECT_SOURCE_DIR}/plugins/image/bmp.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/crn.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/dds.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/image.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/jpeg.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/ktx.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/pcx.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/tga.cpp
+		${PROJECT_SOURCE_DIR}/plugins/image/webp.cpp
+)
+target_compile_definitions(image PRIVATE NO_WEBP NO_KTX NO_JPEG NO_DDS NO_CRN)
+
 add_module(imagevtf
 	SOURCES
 		${PROJECT_SOURCE_DIR}/plugins/imagevtf/imagevtf.cpp

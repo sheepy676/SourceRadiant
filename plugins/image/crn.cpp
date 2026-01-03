@@ -19,6 +19,7 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef NO_CRN
 
 #include "crn.h"
 
@@ -49,3 +50,5 @@ Image* LoadCRN( ArchiveFile& file ){
 	ScopedArchiveBuffer buffer( file );
 	return LoadCRNBuff( buffer.buffer, buffer.length );
 }
+
+#endif // NO_CRN

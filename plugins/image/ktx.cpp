@@ -19,6 +19,8 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef NO_KTX
+
 #include "ktx.h"
 
 #include <cstring>
@@ -414,3 +416,5 @@ Image* LoadKTX( ArchiveFile& file ){
 	PointerInputStream istream( buffer.buffer );
 	return LoadKTXBuff( istream );
 }
+
+#endif // NO_KTX

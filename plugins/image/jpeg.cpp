@@ -34,6 +34,8 @@
 // Leonardo Zide (leo@lokigames.com)
 //
 
+#ifndef NO_JPEG
+
 #include "jpeg.h"
 
 #include <csetjmp>
@@ -397,3 +399,5 @@ Image* LoadJPG( ArchiveFile& file ){
 	ScopedArchiveBuffer buffer( file );
 	return LoadJPGBuff_( buffer.buffer, static_cast<int>( buffer.length ) );
 }
+
+#endif // NO_JPEG

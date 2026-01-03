@@ -19,6 +19,8 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef NO_DDS
+
 #include "dds.h"
 
 #include <cstdlib>
@@ -50,3 +52,5 @@ Image* LoadDDS( ArchiveFile& file ){
 	ScopedArchiveBuffer buffer( file );
 	return LoadDDSBuff( buffer.buffer );
 }
+
+#endif // NO_DDS

@@ -19,6 +19,7 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef NO_WEBP
 
 #include "webp.h"
 
@@ -43,3 +44,5 @@ Image* LoadWebp( ArchiveFile& file ){
 	ScopedArchiveBuffer buffer( file );
 	return LoadWebpBuff( buffer.buffer, buffer.length );
 }
+
+#endif // NO_WEBP
