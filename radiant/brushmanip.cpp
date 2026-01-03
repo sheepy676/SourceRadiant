@@ -1531,9 +1531,10 @@ void Brush_constructMenu( QMenu* menu ){
 	create_check_menu_item_with_mnemonic( menu, "Texture Lock", "TogTexLock" );
 	create_check_menu_item_with_mnemonic( menu, "Texture Vertex Lock", "TogTexVertexLock" );
 	create_menu_item_with_mnemonic( menu, "Reset Texture", "TextureReset/Cap" );
-#ifndef SOURCERADIANT
-	create_menu_item_with_mnemonic( menu, "AutoCaulk Selected", "AutoCaulkSelected" );
-#endif
+
+	if ( !string_equal( GlobalRadiant().getGameDescriptionKeyValue( "no_autocaulk" ), "1" ) )
+		create_menu_item_with_mnemonic( menu, "AutoCaulk Selected", "AutoCaulkSelected" );
+
 	command_connect_accelerator( "Brush3Sided" );
 	command_connect_accelerator( "Brush4Sided" );
 	command_connect_accelerator( "Brush5Sided" );

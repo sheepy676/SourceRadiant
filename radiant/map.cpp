@@ -2439,9 +2439,9 @@ void Map_Construct(){
 	GlobalCommands_insert( "RegionSetBrush", makeCallbackF( RegionBrush ) );
 	//GlobalCommands_insert( "RegionSetSelection", makeCallbackF( RegionSelected ), QKeySequence( "Ctrl+Shift+R" ) );
 	GlobalToggles_insert( "RegionSetSelection", makeCallbackF( RegionSelected ), ToggleItem::AddCallbackCaller( g_region_item ), QKeySequence( "Ctrl+Shift+R" ) );
-#ifndef SOURCERADIANT
-	GlobalCommands_insert( "AutoCaulkSelected", makeCallbackF( map_autocaulk_selected ), QKeySequence( "F4" ) );
-#endif
+
+	if ( !string_equal( GlobalRadiant().getGameDescriptionKeyValue( "no_autocaulk" ), "1" ) )
+		GlobalCommands_insert( "AutoCaulkSelected", makeCallbackF( map_autocaulk_selected ), QKeySequence( "F4" ) );
 
 	GlobalCommands_insert( "FindBrush", makeCallbackF( DoFind ) );
 	GlobalCommands_insert( "MapInfo", makeCallbackF( DoMapInfo ), QKeySequence( "M" ) );

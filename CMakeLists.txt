@@ -270,7 +270,6 @@ add_executable(radiant WIN32
 	${PROJECT_SOURCE_DIR}/radiant/xywindow.cpp
 )
 
-target_compile_definitions(radiant PRIVATE SOURCERADIANT)
 target_compile_definitions(radiant PRIVATE QT_NO_KEYWORDS)
 target_compile_definitions(radiant PRIVATE
 	RADIANT_VERSION=\"${RADIANT_VERSION}\"
@@ -431,6 +430,8 @@ function(add_gamepack name)
   no_patch="1"
   no_plugins="0"
   no_bsp_monitor="1"
+  no_autocaulk="1"
+  no_outputs="0"
   use_new_output_separator="$<TARGET_PROPERTY:USE_NEW_OUTPUT_SEPARATOR>"
   shader_caulk = "materials/tools/toolsskip"
   shader_trigger = "materials/tools/toolstrigger"
