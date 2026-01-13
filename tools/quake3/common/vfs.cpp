@@ -56,7 +56,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <sys/stat.h>
-#include <glib.h>
 
 #include "cmdlib.h"
 #include "qstringops.h"
@@ -70,6 +69,7 @@
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
 #include <forward_list>
+#include <filesystem>
 
 struct VFS_PAK
 {
@@ -140,7 +140,7 @@ static void vfsInitPakFile( const char *filename ){
 void vfsInitDirectory( const char *path, const char *pk3ext, const char *pk3dirext ){
 	const auto path_is_forbidden = []( const char *path ){
 		return std::ranges::any_of( g_strForbiddenDirs, [name = path_get_filename_start( path )]( const CopiedString& forbidden ){
-			return matchpattern( name, forbidden.c_str(), TRUE );
+			return matchpattern( name, forbidden.c_str(), true );
 		} );
 	};
 
@@ -158,11 +158,13 @@ void vfsInitDirectory( const char *path, const char *pk3ext, const char *pk3dire
 	const CopiedString pathCleaned = g_strDirs.emplace_back( StringStream( DirectoryCleaned( path ) ) );
 
 	if ( g_bUsePak ) {
-		if ( GDir *dir = g_dir_open( path, 0, nullptr ) ) {
+		if ( std::filesystem::exists( path ) ) {
 			std::vector<StringOutputStream> paks;
+			std::filesystem::directory_iterator dir { path };
+			for ( auto& entry : dir ) {
+				auto entryname = entry.path().filename().generic_u8string();
+				const char* name = reinterpret_cast<char const*>(entryname.c_str());
 
-			while ( const char *name = g_dir_read_name( dir ) )
-			{
 				if ( path_is_forbidden( name ) )
 					continue;
 
@@ -173,7 +175,6 @@ void vfsInitDirectory( const char *path, const char *pk3ext, const char *pk3dire
 					g_strDirs.emplace_back( StringStream( pathCleaned, name, '/' ) );
 				}
 			}
-			g_dir_close( dir );
 
 			// sort paks in ascending order
 			// pakFiles are then prepended to the list, reversing the order
@@ -201,17 +202,16 @@ std::vector<CopiedString> vfsListShaderFiles( const char *shaderPath ){
 	};
 	/* search in dirs */
 	for ( const auto& strdir : g_strDirs ){
-		GDir *dir = g_dir_open( StringStream( strdir, shaderPath, '/' ), 0, nullptr );
-
-		if ( dir != nullptr ) {
-			const char* name;
-			while ( ( name = g_dir_read_name( dir ) ) )
-			{
+		auto path = StringStream( strdir, shaderPath, '/' );
+		if ( std::filesystem::exists( path.c_str() ) ) {
+			std::filesystem::directory_iterator dir { path.c_str() };
+			for ( auto& entry : dir ) {
+				auto entryname = entry.path().filename().generic_u8string();
+				const char* name = reinterpret_cast<char const*>(entryname.c_str());
 				if ( path_extension_is( name, "shader" ) ) {
 					insert( name );
 				}
 			}
-			g_dir_close( dir );
 		}
 	}
 	/* search in packs */

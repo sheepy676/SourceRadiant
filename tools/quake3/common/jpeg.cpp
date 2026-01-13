@@ -34,6 +34,8 @@
 // Leonardo Zide (leo@lokigames.com)
 //
 
+#ifndef NO_JPEG
+
 #include <csetjmp>
 #include <cstdlib>
 #include <cstdio>
@@ -384,3 +386,5 @@ int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int *width
 
 	return 0;
 }
+
+#endif // NO_JPEG

@@ -86,6 +86,8 @@ static void LoadDDSBuffer( byte *buffer, int size, byte **pixels, int *width, in
 }
 
 
+
+#ifndef NO_CRN
 /*
     LoadCRNBuffer
     loads a crn image into a valid rgba image
@@ -105,6 +107,7 @@ void LoadCRNBuffer( byte *buffer, int size, byte **pixels, int *width, int *heig
 		Sys_Warning( "Error decoding crn image.\n" );
 	}
 }
+#endif
 
 
 
@@ -304,7 +307,9 @@ const image_t *ImageLoad( const char *name ){
 	int width, height;
 	char filename[ 1024 ];
 	MemBuffer buffer;
+#ifndef NO_JPEG
 	bool alphaHack = false;
+#endif
 
 	/* attempt to load various formats */
 	if ( sprintf( filename, "%s.tga", name ); ( buffer = vfsLoadFile( filename ) ) ) // StripExtension( name ); already
@@ -317,12 +322,14 @@ const image_t *ImageLoad( const char *name ){
 	}
 	else if( path_set_extension( filename, ".jpg" ); ( buffer = vfsLoadFile( filename ) ) )
 	{
+#ifndef NO_JPEG
 		if ( LoadJPGBuff( buffer.data(), buffer.size(), &pixels, &width, &height ) == -1 && pixels != nullptr ) {
 			// On error, LoadJPGBuff might store a pointer to the error message in pixels
 			Sys_Warning( "LoadJPGBuff %s %s\n", filename, (unsigned char*) pixels );
 			pixels = nullptr;
 		}
 		alphaHack = true;
+#endif
 	}
 	else if( path_set_extension( filename, ".dds" ); ( buffer = vfsLoadFile( filename ) ) )
 	{
@@ -344,14 +351,18 @@ const image_t *ImageLoad( const char *name ){
 	{
 		LoadKTXBufferFirstImage( buffer.data(), buffer.size(), &pixels, &width, &height );
 	}
+#ifndef NO_CRN
 	else if( path_set_extension( filename, ".crn" ); ( buffer = vfsLoadFile( filename ) ) )
 	{
 		LoadCRNBuffer( buffer.data(), buffer.size(), &pixels, &width, &height );
 	}
+#endif
+#ifndef NO_WEBP
 	else if( path_set_extension( filename, ".webp" ); ( buffer = vfsLoadFile( filename ) ) )
 	{
 		pixels = ConvertWebptoRGBA( buffer.data(), buffer.size(), width, height );
 	}
+#endif
 
 	/* make sure everything's kosher */
 	if ( !buffer || width <= 0 || height <= 0 || pixels == nullptr ) {
@@ -363,6 +374,7 @@ const image_t *ImageLoad( const char *name ){
 	/* everybody's in the place, create new image */
 	image_t& image = *images.emplace_after( images.cbegin(), name, filename, width, height, pixels );
 
+#ifndef NO_JPEG
 	if ( alphaHack ) {
 		if ( path_set_extension( filename, "_alpha.jpg" ); ( buffer = vfsLoadFile( filename ) ) ) {
 			if ( LoadJPGBuff( buffer.data(), buffer.size(), &pixels, &width, &height ) == -1 ) {
@@ -379,6 +391,7 @@ const image_t *ImageLoad( const char *name ){
 			}
 		}
 	}
+#endif
 
 	/* return the image */
 	return &image;

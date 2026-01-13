@@ -4,13 +4,17 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # options
 
+include(CMakeDependentOption)
+
 option(RADIANT_GENERATE_GAMEPACKS "Generate gamepacks" ON)
 option(RADIANT_USE_ASSIMP "Build Assimp model loader plugin" OFF)
+cmake_dependent_option(RADIANT_BUILD_Q3MAP2 "Build q3map2" ON RADIANT_USE_ASSIMP OFF)
 
 set(RADIANT_VERSION "1.6.0n" CACHE STRING "")
 set(RADIANT_MAJOR_VERSION "6" CACHE STRING "")
 set(RADIANT_MINOR_VERSION "0" CACHE STRING "")
 set(RADIANT_ABOUTMSG "trans rights are human rights" CACHE STRING "")
+set(Q3MAP_VERSION "2.5.17n" CACHE STRING "")
 
 # external dependencies
 
@@ -381,6 +385,12 @@ endif()
 
 if(RADIANT_GENERATE_GAMEPACKS)
 	include(gamepacks)
+endif()
+
+# q3map2
+
+if(RADIANT_BUILD_Q3MAP2)
+	include(q3map2)
 endif()
 
 # modules

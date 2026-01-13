@@ -35,6 +35,7 @@
 #include "timer.h"
 #include <thread>
 #include <mutex>
+#include <cstring>
 
 #ifdef WIN32
 #include <direct.h>
@@ -44,9 +45,6 @@
 // network broadcasting
 #include "l_net/l_net.h"
 #include <libxml/tree.h>
-
-// utf8 conversion
-#include <glib.h>
 
 static socket_t *brdcst_socket;
 
@@ -280,9 +278,13 @@ static void xml_message_flush(){
 	{
 		mesege[mesege_len] = '\0';
 		mesege_len = 0;
+#if 0 // FIXME: replace this - erysdren
 		gchar* utf8 = g_locale_to_utf8( mesege, -1, nullptr, nullptr, nullptr );
 		xmlNodeAddContent( node, (const xmlChar*)utf8 );
 		g_free( utf8 );
+#else
+		xmlNodeAddContent( node, (const xmlChar*)mesege );
+#endif
 	}
 	char level[2];
 	level[0] = (int)'0' + mesege_flag;

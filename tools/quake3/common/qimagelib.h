@@ -41,7 +41,9 @@ void LoadTGA( const char *filename, byte **pixels, int *width, int *height );
 void LoadTGABuffer( const byte *buffer, const size_t dataSize, byte **pic, int *width, int *height );
 void WriteTGA( const char *filename, const byte *data, int width, int height );
 void WriteTGAGray( const char *filename, byte *data, int width, int height );
+#ifndef NO_JPEG
 int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int *width, int *height );
+#endif
 
 void Load32BitImage( const char *name, unsigned **pixels, int *width, int *height );
 
