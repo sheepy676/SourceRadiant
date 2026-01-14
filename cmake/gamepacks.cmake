@@ -1,9 +1,15 @@
 
 function(add_gamepack name)
-	cmake_parse_arguments(PARSE_ARGV 1 ARG "HAS_BASEGAME;USE_NEW_OUTPUT_SEPARATOR" "ENTITIES;PREFIX;BASE_TITLE;BASE_GAMEDIR;TITLE;GAMEDIR;PATH_WIN32;PATH_LINUX;PATH_MACOS;EXECUTABLE_WIN32;EXECUTABLE_LINUX;EXECUTABLE_MACOS" "KNOWN_TITLES;KNOWN_GAMEDIRS")
+	cmake_parse_arguments(PARSE_ARGV 1 ARG "HAS_BASEGAME;USE_NEW_OUTPUT_SEPARATOR;GOLDSRC" "ENTITIES;PREFIX;BASE_TITLE;BASE_GAMEDIR;TITLE;GAMEDIR;PATH_WIN32;PATH_LINUX;PATH_MACOS;EXECUTABLE_WIN32;EXECUTABLE_LINUX;EXECUTABLE_MACOS" "KNOWN_TITLES;KNOWN_GAMEDIRS")
 	file(MAKE_DIRECTORY "${PROJECT_SOURCE_DIR}/install/gamepacks/games/")
 	file(MAKE_DIRECTORY "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/")
-	file(COPY "${PROJECT_SOURCE_DIR}/cmake/default_build_menu.xml" DESTINATION "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/")
+	if(ARG_GOLDSRC)
+		file(COPY "${PROJECT_SOURCE_DIR}/cmake/default_build_menu_goldsrc_ericwtools.xml" DESTINATION "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/")
+		file(RENAME "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/default_build_menu_goldsrc_ericwtools.xml" "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/default_build_menu.xml")
+	else()
+		file(COPY "${PROJECT_SOURCE_DIR}/cmake/default_build_menu_source.xml" DESTINATION "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/")
+		file(RENAME "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/default_build_menu_source.xml" "${PROJECT_SOURCE_DIR}/install/gamepacks/${name}.game/default_build_menu.xml")
+	endif()
 	set(target gamepack_${name})
 	add_custom_target(${target})
 	if(ARG_HAS_BASEGAME)
@@ -20,6 +26,11 @@ function(add_gamepack name)
 	else()
 		set_property(TARGET ${target} PROPERTY USE_NEW_OUTPUT_SEPARATOR 0)
 	endif()
+	if(ARG_GOLDSRC)
+		set_property(TARGET ${target} PROPERTY GOLDSRC 1)
+	else()
+		set_property(TARGET ${target} PROPERTY GOLDSRC 0)
+	endif()
 	set_property(TARGET ${target} PROPERTY PREFIX ${ARG_PREFIX})
 	set_property(TARGET ${target} PROPERTY PATH_WIN32 ${ARG_PATH_WIN32})
 	set_property(TARGET ${target} PROPERTY PATH_LINUX ${ARG_PATH_LINUX})
@@ -35,7 +46,7 @@ function(add_gamepack name)
 		CONTENT
 [[<?xml version="1.0"?>
 <game
-  type="source"
+  type="$<IF:$<TARGET_PROPERTY:GOLDSRC>,hl,source>"
   index="1"
   name="$<TARGET_PROPERTY:TITLE>"
   enginepath_win32="$<TARGET_PROPERTY:PATH_WIN32>"
@@ -49,27 +60,28 @@ function(add_gamepack name)
   basegamename="$<IF:$<TARGET_PROPERTY:HAS_BASEGAME>,$<TARGET_PROPERTY:BASE_TITLE>,$<TARGET_PROPERTY:TITLE>>"
   knowngames="$<LIST:JOIN,$<TARGET_PROPERTY:KNOWN_GAMEDIRS>, >"
   knowngamenames="$<LIST:JOIN,$<TARGET_PROPERTY:KNOWN_TITLES>,$<SEMICOLON>>"
-  shaderpath="materials"
-  archivetypes="vpk gma gcf"
-  texturetypes="vtf tth"
+  shaderpath="$<IF:$<TARGET_PROPERTY:GOLDSRC>,textures,materials>"
+  archivetypes="$<IF:$<TARGET_PROPERTY:GOLDSRC>,pak wad,vpk gma gcf>"
+  texturetypes="$<IF:$<TARGET_PROPERTY:GOLDSRC>,hlw spr mdl,vtf tth>"
   modeltypes="mdl"
   soundtypes="wav mp3"
-  maptypes="mapvmf"
-  shaders="source"
+  maptypes="$<IF:$<TARGET_PROPERTY:GOLDSRC>,maphl,mapvmf>"
+  shaders="$<IF:$<TARGET_PROPERTY:GOLDSRC>,quake3,source>"
   entityclass="quake3"
   entityclasstype="fgd"
   entities="source"
   entitiesfilename="$<TARGET_PROPERTY:ENTITIES>"
   brushtypes="halflife"
   patchtypes="quake3"
-  default_scale="0.25"
+  default_scale="$<IF:$<TARGET_PROPERTY:GOLDSRC>,1.0,0.25>"
   no_patch="1"
   no_plugins="0"
   no_bsp_monitor="1"
   no_autocaulk="1"
-  no_outputs="0"
-  mapextension=".vmf"
-  mapbackupextension=".vmx"
+  no_outputs="$<IF:$<TARGET_PROPERTY:GOLDSRC>,1,0>"
+  show_wads="$<IF:$<TARGET_PROPERTY:GOLDSRC>,1,0>"
+  mapextension="$<IF:$<TARGET_PROPERTY:GOLDSRC>,.map,.vmf>"
+  mapbackupextension="$<IF:$<TARGET_PROPERTY:GOLDSRC>,.bak,.vmx>"
   use_new_output_separator="$<TARGET_PROPERTY:USE_NEW_OUTPUT_SEPARATOR>"
   shader_caulk = "materials/tools/toolsskip"
   shader_trigger = "materials/tools/toolstrigger"
@@ -84,6 +96,9 @@ endfunction()
 
 # source engine gamepacks
 include(gamepacks/source)
+
+# goldsrc engine gamepacks
+include(gamepacks/goldsrc)
 
 # put your custom gamepacks in here:
 # cmake/gamepacks/user.cmake
