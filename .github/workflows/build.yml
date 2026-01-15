@@ -82,7 +82,7 @@ jobs:
 
     - name: Configure
       run: |
-        cmake -S. --preset DefaultNinja -DCMAKE_BUILD_TYPE=Release
+        cmake -S. --preset DefaultNinja -DCMAKE_BUILD_TYPE=Release -DRADIANT_USE_ASSIMP=ON
 
     - name: Build
       run: |
