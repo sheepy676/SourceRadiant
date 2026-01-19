@@ -1,6 +1,6 @@
 
 # Counter-Strike: Source
-add_gamepack(cstrike
+radiant_add_gamepack(cstrike
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -17,7 +17,7 @@ add_gamepack(cstrike
 )
 
 # D.I.P.R.I.P. Warm Up
-add_gamepack(diprip
+radiant_add_gamepack(diprip
 	HAS_BASEGAME
 	BASE_TITLE "Source SDK Base 2007"
 	BASE_GAMEDIR "vpks"
@@ -34,7 +34,7 @@ add_gamepack(diprip
 )
 
 # Day of Defeat: Source
-add_gamepack(dod
+radiant_add_gamepack(dod
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -51,7 +51,7 @@ add_gamepack(dod
 )
 
 # Garry's Mod
-add_gamepack(garrysmod
+radiant_add_gamepack(garrysmod
 	HAS_BASEGAME
 	BASE_TITLE "sourceengine"
 	BASE_GAMEDIR "Source Engine Base Content"
@@ -68,7 +68,7 @@ add_gamepack(garrysmod
 )
 
 # Half-Life 2
-add_gamepack(hl2
+radiant_add_gamepack(hl2
 	TITLE "Half-Life 2"
 	GAMEDIR "hl2"
 	PATH_WIN32 "C:/Program Files (x86)/Steam/steamapps/common/Half-Life 2/"
@@ -81,7 +81,7 @@ add_gamepack(hl2
 )
 
 # Half-Life 2: Episode One
-add_gamepack(episodic
+radiant_add_gamepack(episodic
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -98,7 +98,7 @@ add_gamepack(episodic
 )
 
 # Half-Life 2: Episode Two
-add_gamepack(ep2
+radiant_add_gamepack(ep2
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -115,7 +115,7 @@ add_gamepack(ep2
 )
 
 # Half-Life 2: Lost Coast
-add_gamepack(lostcoast
+radiant_add_gamepack(lostcoast
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -132,7 +132,7 @@ add_gamepack(lostcoast
 )
 
 # Half-Life 2: Deathmatch
-add_gamepack(hl2mp
+radiant_add_gamepack(hl2mp
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -149,7 +149,7 @@ add_gamepack(hl2mp
 )
 
 # Portal
-add_gamepack(portal
+radiant_add_gamepack(portal
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -166,7 +166,7 @@ add_gamepack(portal
 )
 
 # Portal 2
-add_gamepack(portal2
+radiant_add_gamepack(portal2
 	USE_NEW_OUTPUT_SEPARATOR
 	TITLE "Portal 2"
 	GAMEDIR "portal2"
@@ -180,7 +180,7 @@ add_gamepack(portal2
 )
 
 # SiN Episodes: Emergence
-add_gamepack(sinepisodes
+radiant_add_gamepack(sinepisodes
 	HAS_BASEGAME
 	BASE_TITLE "SiN Episodes: Emergence Base Content"
 	BASE_GAMEDIR "vpks"
@@ -197,7 +197,7 @@ add_gamepack(sinepisodes
 )
 
 # Team Fortress 2
-add_gamepack(tf2
+radiant_add_gamepack(tf2
 	HAS_BASEGAME
 	BASE_TITLE "Half-Life 2"
 	BASE_GAMEDIR "hl2"
@@ -214,7 +214,7 @@ add_gamepack(tf2
 )
 
 # Vampire: The Masquerade - Bloodlines
-add_gamepack(vampire
+radiant_add_gamepack(vampire
 	HAS_BASEGAME
 	BASE_TITLE "Vampire: The Masquerade - Bloodlines"
 	BASE_GAMEDIR "Vampire"

@@ -1,6 +1,6 @@
 
 # Half-Life
-add_gamepack(hl
+radiant_add_gamepack(hl
 	GOLDSRC
 	TITLE "Half-Life"
 	GAMEDIR "valve"
