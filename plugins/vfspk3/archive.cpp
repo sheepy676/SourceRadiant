@@ -91,21 +91,10 @@ public:
 				/* skip .pk3dir / .pk4dir / .dpkdir / .pakdir / .waddir the in root, they are processed as DirectoryArchive */
 				&& !( string_empty( root ) && string_length( ext ) == 6 && string_equal_nocase( ext + 3, "dir" ) )
 			) {
-
-				path.push_filename( name );
-
-				bool is_directory = file_is_directory( path.c_str() );
-
-				if ( !is_directory ) {
-					visitor.file( path_make_relative( path.c_str(), m_root.c_str() ) );
-				}
-
-				path.pop();
-
-				if ( is_directory ) {
-					path.push( name );
-					if ( visitor.directory( path_make_relative( path.c_str(), m_root.c_str() ), directory.depth() ) ) {
-						path.pop();
+				if ( !std::filesystem::is_directory( entry.path() ) ) {
+					visitor.file( path_make_relative( reinterpret_cast<char const*>(entry.path().generic_u8string().c_str()), m_root.c_str() ) );
+				} else {
+					if ( visitor.directory( path_make_relative( reinterpret_cast<char const*>(entry.path().generic_u8string().c_str()), m_root.c_str() ), directory.depth() ) ) {
 						directory.disable_recursion_pending();
 					}
 				}
