@@ -7,9 +7,7 @@ SourceRadiant is a fork of NetRadiant-custom ([GtkRadiant](https://icculus.org/g
 
 ## THIS PROJECT IS STILL IN AN EARLY ALPHA STATE!<br/>DO NOT OVERWRITE HAMMER-MADE VMFS WITH THIS!<br/>MAKE BACKUPS!
 
-| ![testroom_standards.vmf](.github/testroom_standards.png) | ![d1_trainstation_02.vmf](.github/d1_trainstation_02.png) |
-|-----------------------------------------------------------|-----------------------------------------------------------|
-| ![ep1_citadel_02b.vmf](.github/ep1_citadel_02b.png)       | ![testchmb_a_00.vmf](.github/testchmb_a_00.png)           |
+![d1_trainstation_02.vmf](.github/trainstation.png)
 
 ## Goals
 
