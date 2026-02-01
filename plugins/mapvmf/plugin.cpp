@@ -44,6 +44,73 @@
 #include <kvpp/kvpp.h>
 
 #include <format>
+#include <map>
+
+// copied from plugins/mapq3/parse.cpp
+class LayersParser
+{
+	Layers& m_layers;
+	std::vector<Layer::iterator> m_layersVec; // vector to access layers by index
+	std::map<int32_t, Layer*> m_visgroupidMap;
+	int m_currentLayer = LAYERIDX0;
+public:
+	LayersParser( scene::Node& root ) : m_layers( *Node_getLayers( root ) ){
+	}
+	void construct_tree(){
+		{
+			auto& list = m_layers.m_children;
+
+#if 0
+			if( list.size() > 1 ) // something was parsed, remove default inserted layer
+				list.pop_front();
+#endif
+
+			m_layersVec.reserve( list.size() );
+			for( auto it = list.begin(); it != list.end(); ++it )
+				m_layersVec.push_back( it );
+			// check safety // note possible circular reference is not checked
+			if( std::ranges::find( list, LAYERIDXPARENT, &Layer::m_parentIndex ) == list.cend() ){
+				globalErrorStream() << "No layers in the root\n";
+				list.front().m_parentIndex = LAYERIDXPARENT;
+			}
+		}
+		for( auto it : m_layersVec ){
+			// check safety
+			if( it->m_parentIndex < LAYERIDXPARENT || it->m_parentIndex >= static_cast<int>( m_layersVec.size() ) ){
+				globalErrorStream() << it->m_parentIndex << " parent layer index out of bounds\n";
+				it->m_parentIndex = LAYERIDXPARENT;
+			}
+			if( it->m_parentIndex > LAYERIDXPARENT && m_layersVec[ it->m_parentIndex ] == it ){
+				globalErrorStream() << it->m_parentIndex << " parent layer index self reference\n";
+				it->m_parentIndex = LAYERIDXPARENT;
+			}
+			// link & reference parent
+			Layer& parent = it->m_parentIndex == LAYERIDXPARENT? m_layers : *m_layersVec[ it->m_parentIndex ];
+			parent.m_children.splice( parent.m_children.cend(), m_layers.m_children, it );
+			it->m_parent = &parent;
+		}
+
+		m_layers.m_currentLayer = &m_layers.m_children.front();
+	}
+	bool read_layers( kvpp::KV1ElementReadable<std::string_view>& visgroups ){
+		for ( auto& visgroup : visgroups ) {
+			auto& layer = m_layers.m_children.emplace_back( visgroup["name"].getValue().data(), nullptr );
+			layer.m_parentIndex = LAYERIDXPARENT;
+			sscanf(visgroup["color"].getValue().data(), "%d %d %d", &layer.m_color[ 0 ], &layer.m_color[ 1 ], &layer.m_color[ 2 ]);
+			m_visgroupidMap[visgroup["visgroupid"].getValue<int32_t>()] = &layer;
+		}
+		return true;
+	}
+	Layer* from_visgroupid(int32_t visgroupid) {
+		return m_visgroupidMap[visgroupid];
+	}
+	Layer* getCurrentLayer(){
+		return m_layersVec[ m_currentLayer ].operator->();
+	}
+	Layer* getFirstlayer(){
+		return &m_layers.m_children.front();
+	}
+};
 
 inline MapImporter* Node_getMapImporter( scene::Node& node ){
 	return NodeTypeCast<MapImporter>::cast( node );
@@ -103,6 +170,7 @@ public:
 		}
 	};
 	void readGraph( scene::Node& root, TextInputStream& inputStream, EntityCreator& entityTable ) const override {
+
 		char buffer[2048];
 		size_t len = 0;
 		std::string kv1Data = "";
@@ -116,6 +184,8 @@ public:
 
 		kvpp::KV1 kv1(kv1Data);
 
+		LayersParser layersParser( root );
+
 		for ( auto elem : kv1 ) {
 			auto key = elem.getKey();
 			if (string_equal_nocase(key.data(), "versioninfo")) {
@@ -124,6 +194,8 @@ public:
 				// FIXME: do we care about any of this?
 			} else if (string_equal_nocase(key.data(), "cordon")) {
 				// FIXME: do we care about any of this?
+			} else if (string_equal_nocase(key.data(), "visgroups")) {
+				layersParser.read_layers( elem );
 			} else if (string_equal_nocase(key.data(), "world") || string_equal_nocase(key.data(), "entity")) {
 				bool hasSolids = false;
 				EntityClass* entityClass = NULL;
@@ -144,6 +216,7 @@ public:
 					continue;
 				}
 				scene::Node& entity( entityTable.createEntity( entityClass ) );
+				entity.m_layer = nullptr;
 				for ( auto e : elem ) {
 					if (string_equal_nocase(e.getKey().data(), "id")) {
 						// FIXME: do we need to keep track of this?
@@ -153,6 +226,7 @@ public:
 							continue;
 						}
 						scene::Node& solid( GlobalBrushCreator().createBrush() );
+						solid.m_layer = nullptr;
 						for ( auto solidelem : e ) {
 							if (string_equal_nocase(solidelem.getKey().data(), "side")) {
 
@@ -175,7 +249,15 @@ public:
 								MapImporter* importer = Node_getMapImporter( solid );
 								MapVMFTextInputStream istream( faceData );
 								importer->importTokens( NewScriptTokeniser( istream ) );
+							}  else if (string_equal_nocase(solidelem.getKey().data(), "editor")) {
+								if ( solidelem.hasChild("visgroupid") ) {
+									int32_t visgroupid = solidelem["visgroupid"].getValue<int32_t>();
+									solid.m_layer = layersParser.from_visgroupid(visgroupid);
+								}
 							}
+						}
+						if ( !solid.m_layer ) {
+							solid.m_layer = layersParser.getFirstlayer();
 						}
 						NodeSmartReference solidnode( solid );
 						if ( !Node_getTraversable( entity ) ) {
@@ -184,7 +266,10 @@ public:
 							Node_getTraversable( entity )->insert( solidnode );
 						}
 					} else if (string_equal_nocase(e.getKey().data(), "editor")) {
-						// FIXME: do we care about any of this?
+						if ( e.hasChild("visgroupid") ) {
+							int32_t visgroupid = e["visgroupid"].getValue<int32_t>();
+							entity.m_layer = layersParser.from_visgroupid(visgroupid);
+						}
 					} else if (string_equal_nocase(e.getKey().data(), "connections")) {
 						for ( auto connection : e ) {
 							Node_getEntity( entity )->addOutput( connection.getKey().data(), connection.getValue().data() );
@@ -197,10 +282,15 @@ public:
 						}
 					}
 				}
+				if ( !entity.m_layer ) {
+					entity.m_layer = layersParser.getFirstlayer();
+				}
 				NodeSmartReference node( entity );
 				Node_getTraversable( root )->insert( node );
 			}
 		}
+
+		layersParser.construct_tree();
 	}
 	class MapVMFWriteKeyValue : public Entity::Visitor
 	{
