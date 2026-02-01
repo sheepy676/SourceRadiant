@@ -529,6 +529,12 @@ add_module(imagevtf
 target_link_libraries(imagevtf PRIVATE sourcepp::vtfpp)
 set_target_properties(sourcepp_vtfpp sourcepp_compression PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+add_module(imagepvr
+	SOURCES
+		${PROJECT_SOURCE_DIR}/plugins/imagepvr/imagepvr.cpp
+		${PROJECT_SOURCE_DIR}/plugins/imagepvr/pvr.cpp
+)
+
 add_module(imagehl
 	SOURCES
 		${PROJECT_SOURCE_DIR}/plugins/imagehl/hlw.cpp
