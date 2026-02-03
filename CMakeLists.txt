@@ -35,7 +35,7 @@ set_target_properties(CMP_Core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 FetchContent_Declare(
 	sourcepp
 	GIT_REPOSITORY https://github.com/craftablescience/sourcepp.git
-	GIT_TAG "v2025.12.4"
+	GIT_TAG "v2026.1.3"
 	EXCLUDE_FROM_ALL
 )
 
