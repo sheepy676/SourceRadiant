@@ -638,6 +638,35 @@ function(add_plugin name)
 	)
 endfunction()
 
+add_plugin(bobtoolz
+	SOURCES
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/bobToolz-GTK.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/bsploader.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/cportals.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DBobView.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DBrush.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DEntity.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DEPair.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/dialogs/dialogs-gtk.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DMap.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DPatch.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DPlane.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DPoint.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DShape.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DTrainDrawer.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DTreePlanter.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DVisDrawer.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/DWinding.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/funchandlers-GTK.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/lists.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/misc.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/ScriptParser.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/shapes.cpp
+		${PROJECT_SOURCE_DIR}/contrib/bobtoolz/visfind.cpp
+)
+target_link_libraries(bobtoolz PRIVATE commandlib mathlib)
+target_link_libraries(bobtoolz PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::OpenGL Qt6::OpenGLWidgets)
+
 add_plugin(brushexport
 	SOURCES
 		${PROJECT_SOURCE_DIR}/contrib/brushexport/callbacks.cpp
@@ -656,3 +685,42 @@ add_plugin(prtview
 		${PROJECT_SOURCE_DIR}/contrib/prtview/prtview.cpp
 )
 target_link_libraries(prtview PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::OpenGL Qt6::OpenGLWidgets)
+
+add_plugin(shaderplug
+	SOURCES
+		${PROJECT_SOURCE_DIR}/contrib/shaderplug/shaderplug.cpp
+)
+target_link_libraries(shaderplug PRIVATE LibXml2::LibXml2)
+
+add_plugin(sunplug
+	SOURCES
+		${PROJECT_SOURCE_DIR}/contrib/sunplug/sunplug.cpp
+)
+target_link_libraries(sunplug PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::OpenGL Qt6::OpenGLWidgets)
+
+add_plugin(ufoaiplug
+	SOURCES
+		${PROJECT_SOURCE_DIR}/contrib/ufoaiplug/ufoai_filters.cpp
+		${PROJECT_SOURCE_DIR}/contrib/ufoaiplug/ufoai_gtk.cpp
+		${PROJECT_SOURCE_DIR}/contrib/ufoaiplug/ufoai_level.cpp
+		${PROJECT_SOURCE_DIR}/contrib/ufoaiplug/ufoai.cpp
+)
+target_link_libraries(ufoaiplug PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::OpenGL Qt6::OpenGLWidgets)
+
+add_plugin(meshtex
+	SOURCES
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/GeneralFunctionDialog.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/GenericDialog.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/GenericMainMenu.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/GenericPluginUI.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/GetInfoDialog.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/MainMenu.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/MeshEntity.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/MeshVisitor.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/PluginModule.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/PluginRegistration.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/PluginUI.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/RefCounted.cpp
+		${PROJECT_SOURCE_DIR}/contrib/meshtex/SetScaleDialog.cpp
+)
+target_link_libraries(meshtex PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::OpenGL Qt6::OpenGLWidgets)
