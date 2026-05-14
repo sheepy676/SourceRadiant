@@ -289,11 +289,11 @@ qt_add_resources(radiant "radiant"
 
 target_compile_definitions(radiant PRIVATE QT_NO_KEYWORDS)
 target_compile_definitions(radiant PRIVATE
-	RADIANT_VERSION=\"${RADIANT_VERSION}\"
-	RADIANT_MAJOR_VERSION=\"${RADIANT_MAJOR_VERSION}\"
-	RADIANT_MINOR_VERSION=\"${RADIANT_MINOR_VERSION}\"
-	RADIANT_PATCH_VERSION=\"${RADIANT_PATCH_VERSION}\"
-	RADIANT_ABOUTMSG=\"${RADIANT_ABOUTMSG}\"
+	RADIANT_VERSION=$<QUOTE>${RADIANT_VERSION}$<QUOTE>
+	RADIANT_MAJOR_VERSION=$<QUOTE>${RADIANT_MAJOR_VERSION}$<QUOTE>
+	RADIANT_MINOR_VERSION=$<QUOTE>${RADIANT_MINOR_VERSION}$<QUOTE>
+	RADIANT_PATCH_VERSION=$<QUOTE>${RADIANT_PATCH_VERSION}$<QUOTE>
+	RADIANT_ABOUTMSG=$<QUOTE>${RADIANT_ABOUTMSG}$<QUOTE>
 )
 
 target_include_directories(radiant PRIVATE
@@ -343,7 +343,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	target_compile_definitions(gtkutil PRIVATE WIN32)
 	target_compile_definitions(l_net PRIVATE WIN32)
 	target_compile_definitions(xmllib PRIVATE WIN32)
-	target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=\"exe\")
+	target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=$<QUOTE>exe$<QUOTE>)
 	install(CODE [[
 		file(GET_RUNTIME_DEPENDENCIES
 			RESOLVED_DEPENDENCIES_VAR RADIANT_RESOLVED_DEPENDENCIES
@@ -371,14 +371,14 @@ else()
 	target_compile_definitions(xmllib PRIVATE POSIX XWINDOWS)
 	if(EMSCRIPTEN)
 		target_compile_options(radiant PRIVATE -sMAIN_MODULE=1)
-		target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=\"emscripten\")
+		target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=$<QUOTE>emscripten$<QUOTE>)
 		set_target_properties(radiant PROPERTIES SUFFIX ".js")
 	elseif(DEFINED CMAKE_SYSTEM_PROCESSOR)
 		string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_PROCESSOR)
-		target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=\"${SYSTEM_PROCESSOR}\")
+		target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=$<QUOTE>${SYSTEM_PROCESSOR}$<QUOTE>)
 		set_target_properties(radiant PROPERTIES SUFFIX ".${SYSTEM_PROCESSOR}")
 	else()
-		target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=\"unknown\")
+		target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=$<QUOTE>unknown$<QUOTE>)
 	endif()
 endif()
 
