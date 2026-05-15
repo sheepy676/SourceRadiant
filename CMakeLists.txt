@@ -334,7 +334,7 @@ file(COPY ${RADIANT_DATA_FILES} DESTINATION ${PROJECT_SOURCE_DIR}/install/)
 file(COPY "${PROJECT_SOURCE_DIR}/docs/mouse shortcuts.txt" DESTINATION ${PROJECT_SOURCE_DIR}/install/docs/)
 
 if(MINGW)
-	target_compile_options(radiant PRIVATE -static-libgcc -static-libstdc++ -static -mcrtdll=msvcrt-os)
+	target_compile_options(radiant PRIVATE -static-libgcc -static-libstdc++ -static)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
