@@ -58,6 +58,8 @@
 #include <QPlainTextEdit>
 #include <QComboBox>
 
+#include <cstdint>
+
 #include "os/path.h"
 #include "generic/static.h"
 #include "stream/stringstream.h"
