@@ -198,6 +198,8 @@ static void addModelToEntity( EntityClass* entityClass, const toolpp::FGD::Entit
 		}
 	} else if ( auto studioProperty = findClassProperty( entity, "studioprop" ); studioProperty != entity.classProperties.end() ) {
 		entityClass->miscmodel_is = true;
+	} else if ( auto studioProperty = findClassProperty( entity, "model" ); studioProperty != entity.classProperties.end() ) {
+		entityClass->miscmodel_is = true;
 	}
 }
 
