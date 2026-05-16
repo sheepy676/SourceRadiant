@@ -99,15 +99,15 @@ static void addFieldsToEntity( EntityClass* entityClass, const std::vector<toolp
 		EntityClassAttribute attribute;
 		attribute.m_name = field.name;
 		attribute.m_displayName = field.displayName;
-		if ( field.valueType == "studio" ) {
+		if ( field.valueType == "studio" || field.valueType == "model" ) {
 			attribute.m_type = "model";
 			if ( !entityClass->m_modelpath.empty() && !field.valueDefault.empty() ) {
 				entityClass->miscmodel_is = true;
 				entityClass->m_modelpath = field.valueDefault;
 			}
-		} else if ( field.valueType == "color255" ) {
+		} else if ( field.valueType == "color255" || field.valueType == "color") {
 			attribute.m_type = "color";
-		} else if ( field.valueType == "material" ) {
+		} else if ( field.valueType == "material" || field.valueType == "shader" ) {
 			attribute.m_type = "shader";
 		} else {
 			// FIXME: add proper handlers for more Source-specific types in entityinspector.cpp
