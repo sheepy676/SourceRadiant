@@ -1,3 +1,6 @@
+if(NOT RADIANT_SUPPORT_GOLDSRC)
+	return()
+endif()
 
 # Half-Life
 radiant_add_gamepack(hl
