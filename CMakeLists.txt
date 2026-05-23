@@ -298,6 +298,10 @@ qt_generate_deploy_app_script(
 	OUTPUT_SCRIPT radiant_deploy_script
 	NO_UNSUPPORTED_PLATFORM_ERROR
 )
+install(TARGETS radiant
+	BUNDLE DESTINATION ${PROJECT_SOURCE_DIR}/install
+	RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/install
+)
 install(SCRIPT ${radiant_deploy_script})
 
 target_compile_definitions(radiant PRIVATE QT_NO_KEYWORDS)
@@ -357,6 +361,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	target_compile_definitions(l_net PRIVATE WIN32)
 	target_compile_definitions(xmllib PRIVATE WIN32)
 	target_compile_definitions(radiant PRIVATE RADIANT_EXECUTABLE=$<QUOTE>exe$<QUOTE>)
+	if(0)
 	install(CODE [[
 		file(GET_RUNTIME_DEPENDENCIES
 			RESOLVED_DEPENDENCIES_VAR RADIANT_RESOLVED_DEPENDENCIES
@@ -376,6 +381,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		file(COPY ${RADIANT_RESOLVED_DEPENDENCIES} DESTINATION $<TARGET_FILE_DIR:radiant>)
 		file(COPY $<TARGET_RUNTIME_DLLS:radiant> DESTINATION $<TARGET_FILE_DIR:radiant>)
 	]])
+	endif()
 else()
 	target_compile_definitions(radiant PRIVATE POSIX XWINDOWS)
 	target_compile_definitions(commandlib PRIVATE POSIX XWINDOWS)
